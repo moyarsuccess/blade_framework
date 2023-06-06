@@ -3,8 +3,8 @@ package com.example.di.functions
 import com.example.di.scope.DiScope
 import com.example.di.scope.DiScopeImpl
 
-fun scope(scopeLambda: DiScope.() -> Unit): DiScope {
-    val scope = DiScopeImpl()
+fun scope(scopeComponentId: String, scopeLambda: DiScope.() -> Unit): DiScope {
+    val scope = DiScopeImpl(scopeComponentId)
     scopeLambda(scope)
     return scope
 }

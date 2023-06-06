@@ -3,42 +3,41 @@ package com.example.myapplication
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.di.scope.DiScope
-import com.example.di.scope.ScopeComponent
+import com.example.di.common.DI_PARENT_SCOPE_ID_KEY
+import com.example.di.functions.inject
+import com.example.di.scope.ScopeAwareActivity
+import com.example.myapplication.common.getInstanceId
+import com.example.myapplication.databinding.ActivityPlayerBinding
 
-class PlayerActivity : AppCompatActivity(), ScopeComponent {
+class PlayerActivity : ScopeAwareActivity() {
 
-    override val scope: DiScope = playerActivityScope
+    override val scope = ::playerActivityScope
+    private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val parentScopeId = intent.getStringExtra(EXTRA_PARENT_SCOPE_ID) ?: ""
-        bind(parentScopeId)
-        setContentView(R.layout.activity_player)
-        applyFragment(Frg1.newInstance(scope.scopeId), "frg1")
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.playerActTitle.text =
+            "Player activity -> Test 2 -> " + inject<Test2>().getInstanceId()
+        applyFragment(Frg1.newInstance(scopeComponentId), R.id.frm_container_1, "frg1")
+        applyFragment(Frg1.newInstance(scopeComponentId), R.id.frm_container_2, "frg2")
+        applyFragment(Frg1.newInstance(scopeComponentId), R.id.frm_container_3, "frg3")
     }
 
-    private fun applyFragment(frg: Fragment, tag: String) {
+    private fun applyFragment(frg: Fragment, containerId: Int, tag: String) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.frm_container, frg, tag)
-            .addToBackStack(tag)
+            .replace(containerId, frg, tag)
             .commit()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unbind()
     }
 
     companion object {
 
-        private const val EXTRA_PARENT_SCOPE_ID = "EXTRA_PARENT_SCOPE_ID"
         fun getIntent(context: Context, parentScopeId: String): Intent {
             return Intent(context, PlayerActivity::class.java).apply {
-                putExtra(EXTRA_PARENT_SCOPE_ID, parentScopeId)
+                putExtra(DI_PARENT_SCOPE_ID_KEY, parentScopeId)
             }
         }
     }

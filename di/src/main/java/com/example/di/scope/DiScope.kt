@@ -6,7 +6,7 @@ import com.example.di.module.DiModule
 interface DiScope : DiNode {
     val modules: MutableSet<DiModule>
     var parentScope: DiScope?
-    val scopeId: String
+    var scopeId: String
 
     fun module(moduleLambda: DiModule.() -> Unit)
 

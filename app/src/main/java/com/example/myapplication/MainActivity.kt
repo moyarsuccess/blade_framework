@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         binding.customWidget.init(this)
         binding.btnClose.setOnClickListener { finish() }
         binding.btnOpenPlayer.setOnClickListener {
-            startActivity(PlayerActivity.getIntent(this, customWidgetScope.scopeId))
+            startActivity(PlayerActivity.getIntent(this, binding.customWidget.scopeComponentId))
         }
     }
 }

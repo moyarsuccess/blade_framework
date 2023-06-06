@@ -5,7 +5,9 @@ import com.example.di.common.Key
 import com.example.di.common.ParametersHolder
 import com.example.di.module.DiModule
 
-internal class DiScopeImpl : AbsDiScope() {
+internal class DiScopeImpl(
+    override var scopeId: String
+) : AbsDiScope() {
 
     override fun <T> get(key: Key<T>, parametersHolder: ParametersHolder): T {
         // Ask other same scope level modules

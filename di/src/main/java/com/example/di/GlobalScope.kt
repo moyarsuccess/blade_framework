@@ -5,17 +5,19 @@ import com.example.di.common.ParametersHolder
 import com.example.di.module.DiModule
 import com.example.di.scope.AbsDiScope
 import com.example.di.scope.DiScope
+import java.util.UUID
 
 @PublishedApi
 internal object GlobalScope : AbsDiScope() {
 
     private val directGlobalScopes = mutableMapOf<String, DiScope>()
+    override var scopeId: String = UUID.randomUUID().toString()
 
-    fun bindScopeToGlobalScope(scope: DiScope) {
+    fun addToGlobalGraph(scope: DiScope) {
         directGlobalScopes[scope.scopeId] = scope
     }
 
-    fun unbindScopeFromGlobalScope(scope: DiScope) {
+    fun removeFromGlobalGraph(scope: DiScope) {
         directGlobalScopes.remove(scope.scopeId)
     }
 

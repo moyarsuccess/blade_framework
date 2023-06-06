@@ -8,7 +8,6 @@ internal abstract class AbsDiScope : DiScope {
     override val modules: MutableSet<DiModule> = mutableSetOf()
 
     override var parentScope: DiScope? = null
-    override val scopeId: String = UUID.randomUUID().toString()
 
     override fun module(moduleLambda: DiModule.() -> Unit) {
         val module = DiModuleImpl(this).apply(moduleLambda)

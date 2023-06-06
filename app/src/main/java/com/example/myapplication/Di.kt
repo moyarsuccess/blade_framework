@@ -5,20 +5,20 @@ import com.example.di.common.single
 import com.example.di.functions.module
 import com.example.di.functions.scope
 
-val customWidgetScope = scope {
+fun customWidgetScope(scopeComponentId: String) = scope(scopeComponentId) {
     module { single { Test1(get()) } }
     module { single { Test2(get()) } }
 }
 
-val playerActivityScope = scope {
+fun playerActivityScope(scopeComponentId: String) = scope(scopeComponentId) {
     module { single { Test2(get()) } }
 }
 
-val frg1Scope = scope {
+fun frg1Scope(scopeComponentId: String) = scope(scopeComponentId) {
     module { single { Test2(get()) } }
 }
 
-val frg2Scope = scope {
+fun frg2Scope(scopeComponentId: String) = scope(scopeComponentId) {
     module { single { Test2(get()) } }
 }
 

@@ -4,11 +4,13 @@ import com.example.di.GlobalScope
 
 interface ScopeComponent {
 
-    val scope: DiScope
+    val scope: (scopeId: String) -> DiScope
+    val scopeComponentId: String
 
-    fun bind(parentScopeId: String? = null) {
+    fun bindDi(parentScopeId: String? = null) {
+        val scope = scope.invoke(scopeComponentId)
         scope.parentScope = parentScopeId.getScopeFromId()
-        GlobalScope.bindScopeToGlobalScope(scope)
+        GlobalScope.addToGlobalGraph(scope)
     }
 
     private fun String?.getScopeFromId(): DiScope? {
@@ -16,8 +18,9 @@ interface ScopeComponent {
         return GlobalScope.getScopeOrNull(this)
     }
 
-    fun unbind() {
-        GlobalScope.unbindScopeFromGlobalScope(scope)
+    fun unbindDi() {
+        val scope = GlobalScope.getScopeOrNull(scopeComponentId) ?: return
+        GlobalScope.removeFromGlobalGraph(scope)
         scope.parentScope = null
     }
 }
