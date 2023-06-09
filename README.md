@@ -4,7 +4,7 @@ This is the dependency inject framework of the Android.
 
 For moving forward with the examples first, we need to declare a sample class like below:
 
-```
+```kotlin
 // Interface decleration
 interface HttpClient {
   suspend fun execute(httpRequest: HttpRequest)
@@ -17,7 +17,7 @@ class DefaultHttpClient: HttpClient {
 
 ### How to define a Blade module
 
-```
+```kotlin
 val networkModule = module {
   // declarations of the dependencies' providers go here
 }
@@ -25,7 +25,7 @@ val networkModule = module {
 
 ### How to provide a simple instance
 
-```
+```kotlin
 val networkModule = module {
   factory { DefaultHtttClient() }
 }
@@ -33,7 +33,7 @@ val networkModule = module {
 
 But this factory always returns a DefaultHttpClient, not a HttpClient interface instance. How do we provide the interface instead?
 
-```
+```kotlin
 val networkModule = module {
   factory<HttpClient> { DefaultHtttClient() }
 }
@@ -41,7 +41,7 @@ val networkModule = module {
 
 ### What if the DefaultHttpClient needs a base URL?
 
-```
+```kotlin
 // Class decleration
 class DefaultHttpClient(private val baseUrl: String): HttpClient {
   override suspend fun execute(httpRequest: HttpRequest) {}
@@ -50,7 +50,7 @@ class DefaultHttpClient(private val baseUrl: String): HttpClient {
 
 In this case, we need to provide the base URL.
 
-```
+```kotlin
 val networkModule = module {
 
   factory { "https://fw.tv/api" }
@@ -67,7 +67,7 @@ The Blade provides the ***get()*** function to provide a dependency from the gra
 
 In this case, you need just use getOrNull() which provides a nullable version of the object and not throw and exception.
 
-```
+```kotlin
 val networkModule = module {
 
   factory<HttpClient> { 
@@ -78,7 +78,7 @@ val networkModule = module {
 
 ### What if the DefaultHttpClient gets two strings as the parameter?
 
-```
+```kotlin
 // Class decleration
 class DefaultHttpClient(
   private val baseUrl: String,
@@ -90,7 +90,7 @@ class DefaultHttpClient(
 
 In this case, we need to provide each string with a different ***qualifier.***
 
-```
+```kotlin
 const val BASE_URL_QUALIFIER = "BASE_URL_QUALIFIER"
 const val USER_ID_QUALIFIER = "USER_ID_QUALIFIER"
 
@@ -111,7 +111,7 @@ val networkModule = module {
 
 ### How to start Blade with the globally scoped modules
 
-```
+```kotlin
 fun main() {
   // Load only one module 
   startBlade(networkModule)
@@ -127,7 +127,7 @@ Every single module that is added in at the start time will be added to the glob
 
 For having scopes in Blade you need to define your scope like below:
 
-```
+```kotlin
 fun activityScope(scopeComponentId: String) = scope(scopeComponentId) {
   module {
     factory { /* Provide your scoped dependencies here */ }
@@ -142,17 +142,18 @@ Each scope itself internally has a scope Id, that the developer does not touch. 
 
 Now the question rises is how to manage the lifecycle of these scopes. The ScopeComponent is basically the owner of the scope, it means the Android framework's main components can be a ScopeComponent, like what? Like: Activity, Fragment, View, and so on. However, since the ScopeComponent is just an interface everything technically can be a ScopeComponent. Let’s see how an activity for instance can be a scope component.
 
-```
-fun mainActivityScope(scopeComponentId: String) = scope(scopeComponentId) {
-  module {
-    factory { /* Provide your scoped dependencies here */ }
-    single { /* Provide your scoped dependencies as scoped singletons here */ }
-  }
+```kotlin
+val mainActivityScope: DiScope 
+  get() = scope(scopeComponentId) {
+    module {
+      factory { /* Provide your scoped dependencies here */ }
+      single { /* Provide your scoped dependencies as scoped singletons here */ }
+    }
 }
 
 class MainActivity: ScopeAwareActivity() {
 
-  override val scope: ::mainActivityScope
+  override val scope: mainActivityScope
   
   override fun onCreate(...) {
     super.onCreate(...)
@@ -169,17 +170,18 @@ As you can see in the above example, the only thing you need to do is just imple
 
 Another need that is required sometimes is sub-scoping, which means sometimes some pages are inside others and the developer needs to provide smaller scopes for inner ones while the inner scopes have access to the graph of their parent scopes. In the example above let’s assume that MainActivity provides some instances of some classes but in one of its fragments we need to have our own scope to provide other instances, while if there is anything that provides that is above our knowledge there can be provided by MainActivity scope or even its parent until eventually, global scopes can provide that.
 
-```
-fun framentScope(scopeComponentId: String) = scope(scopeComponentId) {
-  module {
-    factory { /* Provide your scoped dependencies here */ }
-    single { /* Provide your scoped dependencies as scoped singletons here */ }
-  }
+```kotlin
+val framentScope: DiScope 
+  get() = scope(scopeComponentId) {
+    module {
+      factory { /* Provide your scoped dependencies here */ }
+      single { /* Provide your scoped dependencies as scoped singletons here */ }
+    }
 }
 
 class SubScopeFragment: ScopeAwareFragment() {
 
-  override val scope = ::framentScope
+  override val scope = framentScope
   
   override fun onCreateView(...) {
     super.onCreate(...)
@@ -199,10 +201,10 @@ class SubScopeFragment: ScopeAwareFragment() {
 }
 
 // Now when you create this fragment can pass the scope id of the parent scope like this
-SubScopeFragment.newInstance(scopeComponentId)
+SubScopeFragment.newInstance(scope.scopeId)
 
 // If you are already in the MainActivity class then
-SubScopeFragment.newInstance(scopeComponentId)
+SubScopeFragment.newInstance(scope.scopeId)
 ```
 
 In this solution, sub-scoping happens naturally and does not need to be managed manually, especially since the living and dying of the scopes happen automatically and also resolving an instance of a class happens automatically upward. This means if the inner scope can not find an instance it asks its super scope and if super scopes can not provide it asks its super scopes until finally global scope can provide that.
@@ -241,7 +243,7 @@ In Above example the `HttpClient` will be provided from the scope first if the s
 
 ### Let’s suppose we have another implementation of the HttpClient interface for test purposes. How we can provide it? and how we can inject it.
 
-```
+```kotlin
 // Class decleration
 class TesttHttpClient: HttpClient {
   override suspend fun execute(httpRequest: HttpRequest) {}
@@ -274,7 +276,7 @@ fun main() {
 
 ### How to inject lazily an instance?
 
-```
+```kotlin
 fun main() {
   val httpClient: HttpClient = lazyInject()
   
@@ -292,7 +294,7 @@ Let’s suppose the userId that the DefaultHttpClient needs are provided only at
 
 This is how we create our module:
 
-```
+```kotlin
 const val BASE_URL_QUALIFIER = "BASE_URL_QUALIFIER"
 
 const val DEFAULT_HTTP_QUALIFIER = "DEFAULT_HTTP_QUALIFIER"
@@ -315,7 +317,7 @@ val networkModule = module {
 
 As you see above the parameter for ***userId*** is getting from the parameter object in the factory DSL. Now let’s see how to provide that during the *injection time*.
 
-```
+```kotlin
 fun main() {
   val httpClient: HttpClient = inject(paramsHolder = parametersOf(DiParameter("user_id")))
 }
@@ -325,7 +327,7 @@ fun main() {
 
 Also, the ***get()*** function of the parameter object in the factory or single DSL gets these qualifier values. like below:
 
-```
+```kotlin
 const val BASE_URL_QUALIFIER = "BASE_URL_QUALIFIER"
 const val USER_ID_QUALIFIER = "USER_ID_QUALIFIER"
 
@@ -355,7 +357,7 @@ fun main() {
 
 ## Provide a *singleton* instance of a dependency
 
-```
+```kotlin
 val networkModule = module {
   single { DefaultHtttClient() }
 }
@@ -367,7 +369,7 @@ If you use single instead of the factory then the Blade provides the same instan
 
 There are some cases in which we are not sure of the existence of an instance, for example, the case that there is an optional callback from the Host app in SDK. In this case, we can use ***injectOrNull()***
 
-```
+```kotlin
 fun main() {
   val callback: Calback? = injectOrNull()
 }
