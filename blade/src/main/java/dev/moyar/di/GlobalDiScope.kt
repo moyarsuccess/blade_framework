@@ -8,7 +8,7 @@ import dev.moyar.di.scope.DiScope
 import java.util.UUID
 
 @PublishedApi
-internal object GlobalScope : AbsDiScope() {
+internal object GlobalDiScope : AbsDiScope() {
 
     private val directGlobalScopes = mutableMapOf<String, DiScope>()
     override var scopeId: String = UUID.randomUUID().toString()

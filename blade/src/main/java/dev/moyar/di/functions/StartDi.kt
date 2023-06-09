@@ -1,6 +1,6 @@
 package dev.moyar.di.functions
 
-import dev.moyar.di.GlobalScope
+import dev.moyar.di.GlobalDiScope
 import dev.moyar.di.module.DiModule
 
 fun startDi(vararg modules: DiModule) {
@@ -8,5 +8,5 @@ fun startDi(vararg modules: DiModule) {
 }
 
 fun startDi(modules: List<DiModule>) {
-    modules.forEach { GlobalScope.addModule(it) }
+    modules.forEach { GlobalDiScope.addModule(it) }
 }

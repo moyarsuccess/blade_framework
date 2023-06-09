@@ -12,7 +12,7 @@ import dev.moyar.di.scope.ScopeAwareFragment
 
 class Frg2 : ScopeAwareFragment() {
 
-    override val scope = ::frg2Scope
+    override val scope = frg2Scope
     private lateinit var binding: Frg2LayoutBinding
 
     override fun onCreateView(

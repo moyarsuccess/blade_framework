@@ -12,7 +12,7 @@ import dev.moyar.di.scope.ScopeAwareActivity
 
 class PlayerActivity : ScopeAwareActivity() {
 
-    override val scope = ::playerActivityScope
+    override val scope = playerActivityScope
     private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,9 +21,9 @@ class PlayerActivity : ScopeAwareActivity() {
         setContentView(binding.root)
         binding.playerActTitle.text =
             "Player activity -> Test 2 -> " + inject<Test2>().getInstanceId()
-        applyFragment(Frg1.newInstance(scopeComponentId), R.id.frm_container_1, "frg1")
-        applyFragment(Frg1.newInstance(scopeComponentId), R.id.frm_container_2, "frg2")
-        applyFragment(Frg1.newInstance(scopeComponentId), R.id.frm_container_3, "frg3")
+        applyFragment(Frg1.newInstance(scope.scopeId), R.id.frm_container_1, "frg1")
+        applyFragment(Frg1.newInstance(scope.scopeId), R.id.frm_container_2, "frg2")
+        applyFragment(Frg1.newInstance(scope.scopeId), R.id.frm_container_3, "frg3")
     }
 
     private fun applyFragment(frg: Fragment, containerId: Int, tag: String) {

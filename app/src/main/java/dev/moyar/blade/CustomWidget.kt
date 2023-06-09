@@ -3,6 +3,7 @@ package dev.moyar.blade
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.FrameLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -10,15 +11,14 @@ import dev.moyar.blade.common.getInstanceId
 import dev.moyar.blade.databinding.CustomWidgetBinding
 import dev.moyar.di.functions.inject
 import dev.moyar.di.functions.injectOrNull
-import dev.moyar.di.scope.ScopeAwareView
 import dev.moyar.di.scope.ScopeComponent
 
 class CustomWidget @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet
-) : ScopeAwareView(context, attrs), ScopeComponent, LifecycleEventObserver {
+) : FrameLayout(context, attrs), ScopeComponent, LifecycleEventObserver {
 
-    override val scope = ::customWidgetScope
+    override val scope = customWidgetScope
     private val li = LayoutInflater.from(context)
     private val binding = CustomWidgetBinding.inflate(li, this, true)
 

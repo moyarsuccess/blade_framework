@@ -1,6 +1,6 @@
 package dev.moyar.di.module
 
-import dev.moyar.di.GlobalScope
+import dev.moyar.di.GlobalDiScope
 import dev.moyar.di.common.Key
 import dev.moyar.di.common.ParametersHolder
 import dev.moyar.di.common.TypeFactory
@@ -72,7 +72,7 @@ internal class DiModuleImpl(
         if (scopeObject != null) return scopeObject
 
         // Ask main graph to provide the object
-        val obj = GlobalScope.get(key, parametersHolder)
+        val obj = GlobalDiScope.get(key, parametersHolder)
         if (obj != null) return obj
 
         error("Type not supported $key")
@@ -96,7 +96,7 @@ internal class DiModuleImpl(
         if (scopeObject != null) return scopeObject
 
         // Ask main graph to provide the object
-        val obj = GlobalScope.get(key, parametersHolder)
+        val obj = GlobalDiScope.get(key, parametersHolder)
         if (obj != null) return obj
 
         return null

@@ -1,6 +1,6 @@
 package dev.moyar.di.functions
 
-import dev.moyar.di.GlobalScope
+import dev.moyar.di.GlobalDiScope
 import dev.moyar.di.common.DiParameter
 import dev.moyar.di.common.ParametersHolder
 import dev.moyar.di.common.createKey
@@ -16,7 +16,7 @@ inline fun <reified T> inject(
     paramsHolder: ParametersHolder = ParametersHolder(),
 ): T {
     val key = qualifier.createKey(clazz = T::class.java)
-    return GlobalScope
+    return GlobalDiScope
         .get(key, paramsHolder)
         ?: error("No value found for type ${T::class.java}")
 }
@@ -26,8 +26,7 @@ inline fun <reified T> ScopeComponent.inject(
     paramsHolder: ParametersHolder = ParametersHolder(),
 ): T {
     val key = qualifier.createKey(clazz = T::class.java)
-    val scope = GlobalScope.getScopeOrNull(scopeComponentId)
-    return scope?.getOrNull(key, paramsHolder)
+    return scope.getOrNull(key, paramsHolder)
         ?: error("No value found for type ${T::class.java}")
 }
 
@@ -37,7 +36,7 @@ inline fun <reified T> injectOrNull(
     paramsHolder: ParametersHolder = ParametersHolder(),
 ): T? {
     val key = qualifier.createKey(clazz = T::class.java)
-    return GlobalScope.getOrNull(key, paramsHolder)
+    return GlobalDiScope.getOrNull(key, paramsHolder)
 }
 
 @Suppress("SwallowedException")
@@ -46,8 +45,7 @@ inline fun <reified T> ScopeComponent.injectOrNull(
     paramsHolder: ParametersHolder = ParametersHolder(),
 ): T? {
     val key = qualifier.createKey(clazz = T::class.java)
-    val scope = GlobalScope.getScopeOrNull(scopeComponentId)
-    return scope?.getOrNull(key, paramsHolder)
+    return scope.getOrNull(key, paramsHolder)
 }
 
 inline fun <reified T> lazyInject(

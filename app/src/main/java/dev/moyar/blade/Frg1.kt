@@ -12,7 +12,7 @@ import dev.moyar.di.scope.ScopeAwareFragment
 
 class Frg1 : ScopeAwareFragment() {
 
-    override val scope = ::frg1Scope
+    override val scope = frg1Scope
     private lateinit var binding: Frg1LayoutBinding
 
     override fun onCreateView(
@@ -29,7 +29,7 @@ class Frg1 : ScopeAwareFragment() {
         binding.tvTitle.text = "Frg 1 -> Test 2 -> ${inject<Test2>().getInstanceId()}"
         childFragmentManager
             .beginTransaction()
-            .replace(R.id.frm_container, Frg2.newInstance(scopeComponentId), "frg2")
+            .replace(R.id.frm_container, Frg2.newInstance(scope.scopeId), "frg2")
             .addToBackStack("frg2")
             .commit()
     }

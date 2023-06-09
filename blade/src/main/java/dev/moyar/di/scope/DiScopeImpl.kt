@@ -1,13 +1,11 @@
 package dev.moyar.di.scope
 
-import dev.moyar.di.GlobalScope
+import dev.moyar.di.GlobalDiScope
 import dev.moyar.di.common.Key
 import dev.moyar.di.common.ParametersHolder
 import dev.moyar.di.module.DiModule
 
-internal class DiScopeImpl(
-    override var scopeId: String
-) : AbsDiScope() {
+internal class DiScopeImpl: AbsDiScope() {
 
     override fun <T> get(key: Key<T>, parametersHolder: ParametersHolder): T {
         // Ask other same scope level modules
@@ -19,7 +17,7 @@ internal class DiScopeImpl(
             (parentScope as? DiScopeImpl)?.getOrNull(key, parametersHolder)
         if (parentScopeObject != null) return parentScopeObject
 
-        val obj = GlobalScope.getOrNull(key, parametersHolder)
+        val obj = GlobalDiScope.getOrNull(key, parametersHolder)
         if (obj != null) return obj
 
         error("No object found for key $key")
@@ -35,7 +33,7 @@ internal class DiScopeImpl(
             (parentScope as? DiScopeImpl)?.getOrNull(key, parametersHolder)
         if (parentScopeObject != null) return parentScopeObject
 
-        val obj = GlobalScope.getOrNull(key, parametersHolder)
+        val obj = GlobalDiScope.getOrNull(key, parametersHolder)
         if (obj != null) return obj
 
         return null
