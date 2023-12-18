@@ -5,35 +5,33 @@ import dev.moyar.di.common.Key
 import dev.moyar.di.common.ParametersHolder
 import dev.moyar.di.module.DiModule
 
-internal class DiScopeImpl: AbsDiScope() {
+internal class DiScopeImpl : AbsDiScope() {
 
-    override fun <T> get(key: Key<T>, parametersHolder: ParametersHolder): T {
+    override fun <T> provide(key: Key<T>, parametersHolder: ParametersHolder): T {
         // Ask other same scope level modules
         val sameScopeModulesObject: T? = modules.getOrNull(key, parametersHolder)
         if (sameScopeModulesObject != null) return sameScopeModulesObject
 
         // Ask the parent scope to provide object
-        val parentScopeObject =
-            (parentScope as? DiScopeImpl)?.getOrNull(key, parametersHolder)
+        val parentScopeObject = parentScope?.provideOrNull(key, parametersHolder)
         if (parentScopeObject != null) return parentScopeObject
 
-        val obj = GlobalDiScope.getOrNull(key, parametersHolder)
+        val obj = GlobalDiScope.provideOrNull(key, parametersHolder)
         if (obj != null) return obj
 
         error("No object found for key $key")
     }
 
-    override fun <T> getOrNull(key: Key<T>, parametersHolder: ParametersHolder): T? {
+    override fun <T> provideOrNull(key: Key<T>, parametersHolder: ParametersHolder): T? {
         // Ask other same scope level modules
         val sameScopeModulesObject: T? = modules.getOrNull(key, parametersHolder)
         if (sameScopeModulesObject != null) return sameScopeModulesObject
 
         // Ask the parent scope to provide object
-        val parentScopeObject =
-            (parentScope as? DiScopeImpl)?.getOrNull(key, parametersHolder)
+        val parentScopeObject = parentScope?.provideOrNull(key, parametersHolder)
         if (parentScopeObject != null) return parentScopeObject
 
-        val obj = GlobalDiScope.getOrNull(key, parametersHolder)
+        val obj = GlobalDiScope.provideOrNull(key, parametersHolder)
         if (obj != null) return obj
 
         return null

@@ -1,5 +1,6 @@
 package dev.moyar.di.functions
 
+import dev.moyar.di.GlobalDiScope
 import dev.moyar.di.scope.DiScope
 import dev.moyar.di.scope.DiScopeImpl
 
@@ -12,3 +13,5 @@ fun scope(scopeLambda: DiScope.() -> Unit): DiScope {
 operator fun DiScope.plus(another: DiScope): List<DiScope> {
     return listOf(this, another)
 }
+
+fun isScopeValid(scopeId: String) = GlobalDiScope.getScopeOrNull(scopeId) != null

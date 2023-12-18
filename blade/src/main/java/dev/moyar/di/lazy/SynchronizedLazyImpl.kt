@@ -2,10 +2,7 @@ package dev.moyar.di.lazy
 
 import java.io.Serializable
 
-@Suppress("SerialVersionUIDInSerializableClass")
-@PublishedApi
-internal class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>,
-    Serializable {
+class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
 
     @Volatile
@@ -43,4 +40,8 @@ internal class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nu
 
     @Suppress("UnusedPrivateMember")
     private fun writeReplace(): Any = InitializedLazyImpl(value)
+
+    companion object {
+        const val serialVersionUID = 1L
+    }
 }

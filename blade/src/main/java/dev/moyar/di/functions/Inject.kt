@@ -17,8 +17,15 @@ inline fun <reified T> inject(
 ): T {
     val key = qualifier.createKey(clazz = T::class.java)
     return GlobalDiScope
-        .get(key, paramsHolder)
+        .provide(key, paramsHolder)
         ?: error("No value found for type ${T::class.java}")
+}
+
+inline fun <reified T> find(
+    qualifier: String = "",
+): Boolean {
+    val key = qualifier.createKey(clazz = T::class.java)
+    return GlobalDiScope.find(key)
 }
 
 inline fun <reified T> ScopeComponent.inject(
@@ -26,8 +33,15 @@ inline fun <reified T> ScopeComponent.inject(
     paramsHolder: ParametersHolder = ParametersHolder(),
 ): T {
     val key = qualifier.createKey(clazz = T::class.java)
-    return scope.getOrNull(key, paramsHolder)
+    return scope.provideOrNull(key, paramsHolder)
         ?: error("No value found for type ${T::class.java}")
+}
+
+inline fun <reified T> ScopeComponent.find(
+    qualifier: String = "",
+): Boolean {
+    val key = qualifier.createKey(clazz = T::class.java)
+    return scope.find(key)
 }
 
 @Suppress("SwallowedException")
@@ -36,7 +50,7 @@ inline fun <reified T> injectOrNull(
     paramsHolder: ParametersHolder = ParametersHolder(),
 ): T? {
     val key = qualifier.createKey(clazz = T::class.java)
-    return GlobalDiScope.getOrNull(key, paramsHolder)
+    return GlobalDiScope.provideOrNull(key, paramsHolder)
 }
 
 @Suppress("SwallowedException")
@@ -45,7 +59,7 @@ inline fun <reified T> ScopeComponent.injectOrNull(
     paramsHolder: ParametersHolder = ParametersHolder(),
 ): T? {
     val key = qualifier.createKey(clazz = T::class.java)
-    return scope.getOrNull(key, paramsHolder)
+    return scope.provideOrNull(key, paramsHolder)
 }
 
 inline fun <reified T> lazyInject(

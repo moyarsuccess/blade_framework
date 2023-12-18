@@ -6,12 +6,14 @@ import dev.moyar.di.module.DiModule
 import dev.moyar.di.scope.AbsDiScope
 import dev.moyar.di.scope.DiScope
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 
 @PublishedApi
 internal object GlobalDiScope : AbsDiScope() {
 
+    internal val isInitialized = AtomicBoolean(false)
     private val directGlobalScopes = mutableMapOf<String, DiScope>()
-    override var scopeId: String = UUID.randomUUID().toString()
+    override val scopeId: String = UUID.randomUUID().toString()
 
     fun addToGlobalGraph(scope: DiScope) {
         directGlobalScopes[scope.scopeId] = scope
@@ -29,16 +31,21 @@ internal object GlobalDiScope : AbsDiScope() {
         modules.add(module)
     }
 
-    override fun <T> getOrNull(key: Key<T>, parametersHolder: ParametersHolder): T? {
+    override fun <T> provideOrNull(key: Key<T>, parametersHolder: ParametersHolder): T? {
         return modules
             .firstOrNull { it.canProvide(key) }
-            ?.getOrNull(key, parametersHolder)
+            ?.provideOrNull(key, parametersHolder)
     }
 
-    override fun <T> get(key: Key<T>, parametersHolder: ParametersHolder): T {
+    override fun <T> provide(key: Key<T>, parametersHolder: ParametersHolder): T {
         return modules
             .firstOrNull { it.canProvide(key) }
-            ?.get(key, parametersHolder)
+            ?.provide(key, parametersHolder)
             ?: error("No value found for type $key")
+    }
+
+    fun clear() {
+        modules.clear()
+        directGlobalScopes.clear()
     }
 }

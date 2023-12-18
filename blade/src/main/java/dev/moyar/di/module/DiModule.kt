@@ -8,19 +8,19 @@ import dev.moyar.di.scope.DiScope
 
 interface DiModule : DiNode {
     val factories: HashMap<Key<*>, TypeFactory<*>>
-    val diScope: DiScope?
+    var diScope: DiScope?
 
     fun canProvide(key: Key<*>): Boolean
 
     fun <T> singleProvide(
         clazz: Class<T>,
         qualifier: String = "",
-        singleLambda: (paramsHolder: ParametersHolder) -> T
+        singleLambda: (paramsHolder: ParametersHolder) -> T,
     )
 
     fun <T> factoryProvide(
         clazz: Class<T>,
         qualifier: String = "",
-        factoryLambda: (paramsHolder: ParametersHolder) -> T
+        factoryLambda: (paramsHolder: ParametersHolder) -> T,
     )
 }

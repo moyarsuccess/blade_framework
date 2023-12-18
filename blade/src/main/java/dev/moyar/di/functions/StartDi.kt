@@ -1,12 +1,13 @@
 package dev.moyar.di.functions
 
 import dev.moyar.di.GlobalDiScope
-import dev.moyar.di.module.DiModule
+import dev.moyar.di.scope.DiScope
 
-fun startDi(vararg modules: DiModule) {
-    startDi(modules.toList())
+fun startDi(startDiLambda: DiScope.() -> Unit) {
+    startDiLambda(GlobalDiScope)
+    GlobalDiScope.isInitialized.set(true)
 }
 
-fun startDi(modules: List<DiModule>) {
-    modules.forEach { GlobalDiScope.addModule(it) }
+fun isDiInitialized(): Boolean {
+    return GlobalDiScope.isInitialized.get()
 }

@@ -7,7 +7,7 @@ import dev.moyar.di.common.TypeFactory
 import dev.moyar.di.scope.DiScope
 
 internal class DiModuleImpl(
-    override val diScope: DiScope?
+    override var diScope: DiScope?,
 ) : DiModule {
 
     override val factories: HashMap<Key<*>, TypeFactory<*>> = hashMapOf()
@@ -19,7 +19,7 @@ internal class DiModuleImpl(
     override fun <T> singleProvide(
         clazz: Class<T>,
         qualifier: String,
-        singleLambda: (paramsHolder: ParametersHolder) -> T
+        singleLambda: (paramsHolder: ParametersHolder) -> T,
     ) {
         val typeFactory = createSingleTypeFactory(singleLambda)
         factories[Key(cls = clazz, qualifier = qualifier)] = typeFactory
@@ -41,7 +41,7 @@ internal class DiModuleImpl(
     @PublishedApi
     @JvmSynthetic
     internal fun <T> createSingleTypeFactory(
-        lambda: (paramsHolder: ParametersHolder) -> T
+        lambda: (paramsHolder: ParametersHolder) -> T,
     ): TypeFactory<T> {
         return object : TypeFactory<T> {
             private var obj: T? = null
@@ -56,7 +56,7 @@ internal class DiModuleImpl(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(
+    override fun <T> provide(
         key: Key<T>,
         parametersHolder: ParametersHolder,
     ): T {
@@ -65,38 +65,37 @@ internal class DiModuleImpl(
         if (innerObj != null) return innerObj as T
 
         // Ask my scope to provide the object
-        val scopeObject = diScope?.getOrNull(
-            key = key,
-            parametersHolder = parametersHolder
-        )
-        if (scopeObject != null) return scopeObject
-
-        // Ask main graph to provide the object
-        val obj = GlobalDiScope.get(key, parametersHolder)
-        if (obj != null) return obj
-
-        error("Type not supported $key")
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> getOrNull(
-        key: Key<T>,
-        parametersHolder: ParametersHolder,
-    ): T? {
-
-        // Ask my own factories to provide the object
-        val innerObj = factories[key]?.build(parametersHolder)
-        if (innerObj != null) return innerObj as T
-
-        // Ask my scope to provide the object
-        val scopeObject = diScope?.getOrNull(
+        val scopeObject = diScope?.provideOrNull(
             key = key,
             parametersHolder = parametersHolder,
         )
         if (scopeObject != null) return scopeObject
 
         // Ask main graph to provide the object
-        val obj = GlobalDiScope.get(key, parametersHolder)
+        val obj = GlobalDiScope.provide(key, parametersHolder)
+        if (obj != null) return obj
+
+        error("Type not supported $key")
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> provideOrNull(
+        key: Key<T>,
+        parametersHolder: ParametersHolder,
+    ): T? {
+        // Ask my own factories to provide the object
+        val innerObj = factories[key]?.build(parametersHolder)
+        if (innerObj != null) return innerObj as T
+
+        // Ask my scope to provide the object
+        val scopeObject = diScope?.provideOrNull(
+            key = key,
+            parametersHolder = parametersHolder,
+        )
+        if (scopeObject != null) return scopeObject
+
+        // Ask main graph to provide the object
+        val obj = GlobalDiScope.provideOrNull(key, parametersHolder)
         if (obj != null) return obj
 
         return null

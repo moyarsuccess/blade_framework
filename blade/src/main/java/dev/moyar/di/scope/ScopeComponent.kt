@@ -19,5 +19,6 @@ interface ScopeComponent {
     fun unbindDi() {
         GlobalDiScope.removeFromGlobalGraph(scope)
         scope.parentScope = null
+        scope.modules.clear()
     }
 }
