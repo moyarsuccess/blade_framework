@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.moyar.blade.sample"
+    namespace = "dev.moyar.blade"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
@@ -62,7 +62,7 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.multidex)
 
-    implementation("dev.moyar:blade:1.0.0")
+    implementation("dev.moyar:blade:1.0.1")
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlin.test)

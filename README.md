@@ -8,11 +8,11 @@ A dependency injection framework for Android platform.
 
 Gradle / Groovy
 ```groovy
-implementation 'dev.moyar:blade:1.0.0'
+implementation 'dev.moyar:blade:1.0.1'
 ```
 
 ```kotlin
-implmentation("dev.moyar:blade:1.0.0")
+implmentation("dev.moyar:blade:1.0.1")
 ```
 
 ## Usage
