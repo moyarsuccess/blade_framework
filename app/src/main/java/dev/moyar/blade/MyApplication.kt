@@ -7,6 +7,6 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        startDi(this)
+        startDi(this) {}
     }
 }
