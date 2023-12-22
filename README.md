@@ -1,6 +1,21 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.moyar/blade/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.moyar/blade)
+
 # Blade Dependency injection framework for Android
 
 This is the dependency inject framework of the Android.
+
+## Setup
+
+Gradle / Groovy
+```groovy
+implementation 'dev.moyar:blade:1.0.0'
+```
+
+```kotlin
+implmentation("dev.moyar:blade:1.0.0")
+```
+
+## Usage
 
 For moving forward with the examples first, we need to declare a sample class like below:
 
