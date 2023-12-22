@@ -50,10 +50,6 @@ android {
         ignoreWarnings = false
         warningsAsErrors = true
     }
-
-    buildFeatures {
-        viewBinding = true
-    }
 }
 
 dependencies {

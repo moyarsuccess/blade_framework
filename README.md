@@ -2,7 +2,7 @@
 
 # Blade Dependency injection framework for Android
 
-This is the dependency inject framework of the Android.
+A dependency injection framework for Android platform.
 
 ## Setup
 
